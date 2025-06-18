@@ -1,36 +1,33 @@
-async function cargarDatos() {
-  try {
-    // Cambia esta URL por la de tu backend desplegado
-    const response = await fetch('https://discordstatsevent.onrender.com/');
+const API_URL = 'https://discordstatsevent.onrender.com/api/discord-server-info';
 
-    if (!response.ok) {
-      throw new Error(`Error en la API: ${response.status}`);
-    }
+function renderStats(data) {
+  document.getElementById('totalMembers').textContent = data.memberCount ?? 'N/A';
+  document.getElementById('onlineMembers').textContent = data.onlineCount ?? 'N/A';
+  document.getElementById('todayMessages').textContent = data.messageCount?.today ?? 'N/A';
+  document.getElementById('weekMessages').textContent = data.messageCount?.week ?? 'N/A';
 
-    const data = await response.json();
+  const topList = document.getElementById('topMembers');
+  topList.innerHTML = '';
 
-    // Mostrar total miembros
-    document.getElementById('miembros').textContent = data.totalMembers || 'No disponible';
-
-    // Mostrar Top 5 usuarios
-    const top5List = document.getElementById('top5');
-    top5List.innerHTML = '';
-
-    if (data.top5 && data.top5.length > 0) {
-      data.top5.forEach(user => {
-        const li = document.createElement('li');
-        li.textContent = `${user.username} — ${user.messages} mensajes`;
-        top5List.appendChild(li);
-      });
-    } else {
-      top5List.innerHTML = '<li>No hay datos disponibles</li>';
-    }
-
-  } catch (error) {
-    document.getElementById('miembros').textContent = 'Error al cargar datos';
-    document.getElementById('top5').innerHTML = '<li>Error al cargar datos</li>';
-    console.error(error);
+  if (Array.isArray(data.topMembers) && data.topMembers.length > 0) {
+    data.topMembers.forEach((member, index) => {
+      const li = document.createElement('li');
+      li.textContent = `#${index + 1} ${member.username}: ${member.messages} mensajes`;
+      topList.appendChild(li);
+    });
+  } else {
+    topList.innerHTML = '<li>No hay datos disponibles</li>';
   }
 }
 
-window.onload = cargarDatos;
+fetch(API_URL)
+  .then(res => {
+    if (!res.ok) throw new Error('Error al obtener datos del backend');
+    return res.json();
+  })
+  .then(data => renderStats(data))
+  .catch(error => {
+    console.error(error);
+    document.querySelector('.stats').innerHTML = '<p style="color:red;">❌ Error al cargar los datos</p>';
+    document.getElementById('topMembers').innerHTML = '<li>Error al cargar</li>';
+  });
