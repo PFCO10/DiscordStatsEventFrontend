@@ -1,7 +1,7 @@
 async function cargarDatos() {
   try {
     // Cambia esta URL por la de tu backend desplegado
-    const response = await fetch('https://TU-BACKEND.onrender.com/api/discord-server-info');
+    const response = await fetch('https://discordstatsevent.onrender.com/');
 
     if (!response.ok) {
       throw new Error(`Error en la API: ${response.status}`);
