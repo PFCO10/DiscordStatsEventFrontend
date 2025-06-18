@@ -1,26 +1,65 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Estadísticas de Discord</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Estadísticas Discord</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #121212; color: #eee; padding: 20px; }
+    h1 { color: #7289da; }
+    .stat { margin-bottom: 15px; }
+    .top-member { display: flex; align-items: center; margin-bottom: 10px; }
+    .top-member img { border-radius: 50%; width: 40px; height: 40px; margin-right: 10px; }
+  </style>
 </head>
 <body>
-  <main class="container">
-    <h1>📊 Estadísticas del Servidor de Discord</h1>
+  <h1>📊 Estadísticas del Servidor de Discord</h1>
 
-    <div class="stats">
-      <p>👥 Total de miembros: <span id="totalMembers">Cargando...</span></p>
-      <p>🟢 Miembros en línea: <span id="onlineMembers">Cargando...</span></p>
-      <p>💬 Mensajes hoy: <span id="todayMessages">Cargando...</span></p>
-      <p>📅 Mensajes esta semana: <span id="weekMessages">Cargando...</span></p>
-    </div>
+  <div class="stat" id="memberCount">Miembros totales: Cargando...</div>
+  <div class="stat" id="onlineCount">Miembros en línea: Cargando...</div>
+  <div class="stat" id="messageCountToday">Mensajes hoy: Cargando...</div>
+  <div class="stat" id="messageCountWeek">Mensajes esta semana: Cargando...</div>
 
-    <h2>🏆 Top 5 miembros más activos</h2>
-    <ul id="topMembers" class="top-list">Cargando...</ul>
-  </main>
+  <h2>🏆 Top 5 miembros más activos</h2>
+  <div id="topMembers">Cargando...</div>
 
-  <script src="script.js"></script>
+  <script>
+    fetch('https://discordstatsevent.onrender.com/api/discord-server-info')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('memberCount').textContent = `Miembros totales: ${data.memberCount}`;
+        document.getElementById('onlineCount').textContent = `Miembros en línea: ${data.onlineCount}`;
+        document.getElementById('messageCountToday').textContent = `Mensajes hoy: ${data.messageCount.today}`;
+        document.getElementById('messageCountWeek').textContent = `Mensajes esta semana: ${data.messageCount.week}`;
+
+        const topDiv = document.getElementById('topMembers');
+        topDiv.innerHTML = '';
+
+        if (data.topMembers.length === 0) {
+          topDiv.textContent = 'No hay datos de miembros activos.';
+          return;
+        }
+
+        data.topMembers.forEach(member => {
+          const div = document.createElement('div');
+          div.className = 'top-member';
+          div.innerHTML = `
+            <img src="${member.avatar}" alt="${member.username}" />
+            <div>
+              <strong>${member.username}</strong><br/>
+              Mensajes: ${member.messageCount}
+            </div>
+          `;
+          topDiv.appendChild(div);
+        });
+      })
+      .catch(err => {
+        console.error('Error al cargar datos:', err);
+        document.getElementById('memberCount').textContent = 'Error al cargar los datos';
+        document.getElementById('onlineCount').textContent = '';
+        document.getElementById('messageCountToday').textContent = '';
+        document.getElementById('messageCountWeek').textContent = '';
+        document.getElementById('topMembers').textContent = 'Error al cargar';
+      });
+  </script>
 </body>
 </html>
