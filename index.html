@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Estadísticas Discord</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Estadísticas de Discord</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Estadísticas de Discord</h1>
-    <p><strong>Total de miembros:</strong> <span id="miembros">Cargando...</span></p>
+  <main class="container">
+    <h1>📊 Estadísticas del Servidor de Discord</h1>
 
-    <h2>Top 5 usuarios por mensajes</h2>
-    <ul id="top5">
-      <li>Cargando...</li>
-    </ul>
-  </div>
+    <div class="stats">
+      <p>👥 Total de miembros: <span id="totalMembers">Cargando...</span></p>
+      <p>🟢 Miembros en línea: <span id="onlineMembers">Cargando...</span></p>
+      <p>💬 Mensajes hoy: <span id="todayMessages">Cargando...</span></p>
+      <p>📅 Mensajes esta semana: <span id="weekMessages">Cargando...</span></p>
+    </div>
+
+    <h2>🏆 Top 5 miembros más activos</h2>
+    <ul id="topMembers" class="top-list">Cargando...</ul>
+  </main>
 
   <script src="script.js"></script>
 </body>
